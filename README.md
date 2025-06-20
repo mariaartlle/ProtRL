@@ -1,4 +1,4 @@
-# ProtRL: Direct Preference Optimization for Protein Language Models
+# ProtRL: Reinforcement Learning for Protein Language Models
 <div align="center">
     <img src="https://github.com/user-attachments/assets/b5040d0c-74de-4627-bd2a-3e6344326ef5" width="350" >
 </div>
