@@ -1,4 +1,3 @@
-<img src="https://github.com/user-attachments/assets/6857cfe5-8b43-4a7c-aeea-e1e55eb04c73" width="600"  text-align="center">
 
 # ProtRL: Direct Preference Optimization for Protein Language Models
 
@@ -22,8 +21,8 @@ This is the repository for the paper [*Guiding Generative Protein Language Model
 ## About ProtRL
 
 This implementation allows you to: 
-- train online with a scoring fuction set by you
 - train offline with experimental data
+- train online with a scoring fuction set by you
 
 Starting from GRPO implementation in [Hugging face](https://huggingface.co/docs/trl/main/en/grpo_trainer), we have implemented a new version to pass custom databases each iteration, and weighted and ranked version of DPO (currently non present in Hugging Face Trainer).
 
@@ -31,6 +30,10 @@ There are two different use cases of this script:
 1 -  To train online, each iteration set a standard datasets according HF to have a reward, to then be used. Each iteration generate sequences and save it as: prompt, completition and reward. The reward, will be then used to feedback the model. 
 2 - To train on experimental data
 
+### Offline training
+You can use the script ```train_exp.py``` that takes in input 
+```python 
+python train_exp.py --model_dir "AI4PD/ZymCTRL" --csv "training_data.csv" ```
 ### Online training
 
 In case of GRPO, and in case of simple rewards function (leght, aa ratios, hydrophobicity...) you can directly use GRPO HF standard impelentation. For example in case of lenghts:
