@@ -10,7 +10,7 @@ Currently we have implemented the following algorithms:
 
 This is the repository for the paper [*Guiding Generative Protein Language Models with Reinforcement Learning*](https://arxiv.org/abs/2412.12979). 
 
-### Table of Content
+## Table of Content
 - [About ProtRL](#about-protrl)
 - [Usage](#usage)
 - [Installation](#installation)
