@@ -26,7 +26,7 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument("--model_dir", type=str, required=True)
 parser.add_argument("--csv", type=str, required=True)
-parser.add_argument("--output", type=str, required=True)
+parser.add_argument("--output", type=str, default="./output_")
 parser.add_argument("--learning_rate", type=float, default=2e-5)
 parser.add_argument("--num_epochs", type=int, default=1)
 parser.add_argument("--split_percent", type=float, default=0.2)
