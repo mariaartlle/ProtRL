@@ -1,5 +1,6 @@
 
 # ProtRL: Direct Preference Optimization for Protein Language Models
+![imagen](https://github.com/user-attachments/assets/b5040d0c-74de-4627-bd2a-3e6344326ef5)
 
 ProtRL is a Reinforcement Learning (RL) framework for autoregressive protein Language Models (pLMs).
 Currently we have implemented the following algorithms: 
