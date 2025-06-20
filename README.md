@@ -52,6 +52,7 @@ trainer = pLM_wDPOTrainer( #pLM_rDPOTrainer, pLM_GRPOTrainer
 trainer.train()
 ```
 ### Usage
+#### Offline training
 Use ```train_exp.py```, which expects a CSV file with columns:
 - prompt: prompt if any (in case of conditional generation)
 - sequence: pre-formatted protein sequences
