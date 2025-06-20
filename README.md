@@ -124,13 +124,13 @@ trainer = pLM_wDPOTrainer( #pLM_rDPOTrainer, pLM_GRPOTrainer
 
 trainer.train()
 ```
-> **_NOTE:_** The reward_funcs is ignored and can be set as a function always returning 0
+> **_Note:_** The reward_funcs is ignored and can be set as a function always returning 0
 
 For the original DPO algorithm, we recommend the Hugging Face DPO Trainer.
 
 This 3 different loss functions were adapted from the firsts described in [Widatalla et al., 2024](https://www.biorxiv.org/content/10.1101/2024.05.20.595026v1.abstract). You can find detailed explanations for each loss function and its changes in formulation in the Methods section of the [paper](https://arxiv.org/abs/2412.12979).
 
-*Note*: Weights and advantages are treated as "the higher, the better." If your scoring function is designed to be minimized, please multiply it by -1.
+> **_Note:_** Weights and advantages are treated as "the higher, the better." If your scoring function is designed to be minimized, please multiply it by -1.
 
 ## Installation
 
