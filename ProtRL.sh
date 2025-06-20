@@ -7,7 +7,7 @@
 # where to put stdout / stderr
 #SBATCH --output=%j.out
 #SBATCH --error=%j.err
-#SBATCH --job-name=HF_ProtRL 
+#SBATCH --job-name=ProtRL 
 #SBATCH --time=24:00:00
 
 #SBATCH --gres=gpu:a100:1
@@ -18,6 +18,7 @@ set -e
 set -u
 set -o pipefail
 
+source .env/bin/activate
 
 
 label="4.2.1.1"
