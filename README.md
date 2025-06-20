@@ -66,12 +66,9 @@ python train_exp.py --model_dir "AI4PD/ZymCTRL" --csv "training_data.csv"
 
 
 #### Online training
-1. Simple GRPO (Hugging Face)
-For straightforward rewards (e.g., sequence length, amino-acid ratios), use the standard GRPO trainer:
+1. We reccomend using the HF implementation of GRPO for straightforward rewards (e.g., sequence length, amino-acid ratios), use the standard GRPO trainer:
 
 ```python 
-GRPO_trainer:
-# train_grpo.py
 from datasets import load_dataset
 from trl import GRPOConfig, GRPOTrainer
 
@@ -104,7 +101,7 @@ trainer = GRPO_trainer(
 trainer.train()
 trainer.save_model() 
 ```
-For complex pipelines—where you explicitly generate, save, and externally score sequences each iteration—use our extended trainers. This is ideal for CPU clusters or custom scoring services:
+For complex pipelines—where you explicitly generate, save, and externally score sequences each iteration, you can use our  trainers. This is ideal for scoring in CPU arrays before training on GPU:
 
 ```python
 from src.utils import *
@@ -125,11 +122,11 @@ trainer = weighted_DPO( #pLM_GRPOTrainer
 
 trainer.train()
 ```
-> **_Note:_** The reward_funcs is ignored and can be set as a function always returning 0
+> **_Note:_** The reward_funcs is ignored and can be set as a function always returning 0, see examples. 
 
 For the original DPO algorithm, we recommend the Hugging Face DPO Trainer.
 
-This 3 different loss functions were adapted from the firsts described in [Widatalla et al., 2024](https://www.biorxiv.org/content/10.1101/2024.05.20.595026v1.abstract). You can find detailed explanations for each loss function and its changes in formulation in the Methods section of the [paper](https://arxiv.org/abs/2412.12979).
+Weighted DPO loss functions were adapted from the firsts described in [Widatalla et al., 2024](https://www.biorxiv.org/content/10.1101/2024.05.20.595026v1.abstract). You can find detailed explanations for each loss function and its changes in formulation in the Methods section of the [paper](https://arxiv.org/abs/2412.12979).
 
 > **_Note:_** Weights and advantages are treated as "the higher, the better." If your scoring function is designed to be minimized, please multiply it by -1.
 
@@ -157,7 +154,7 @@ We also provide a more complex example in ```example/ZymCTRL-fold```, where the 
 
 ### Experiments
 
-To reproduce the experiments of our paper, you can find all the scripts in the `Experiments` folder. Given the size and computational needs of pLMs, each one of the experiments were executed in one H100 GPU, with differing times of execution. All the parameters and external data used in the experiments can be found in this repo. The `.sh` scripts can be executed from the same folder to conduct each experiment, they have been built to work on a SLURM based cluster, given the need of GPU-intensive computing. To reproduce the results run: 
+To reproduce the experiments of our paper, you can find all the scripts in the `experiments` folder. Given the size and computational needs of pLMs, each one of the experiments were executed in one H100 GPU, with differing times of execution. All the parameters and external data used in the experiments can be found in this repo. The `.sh` scripts can be executed from the same folder to conduct each experiment, they have been built to work on a SLURM based cluster, given the need of GPU-intensive computing. To reproduce the results run: 
 
 ```bash
 bash experiment_name.sh
@@ -168,22 +165,6 @@ sbatch experiment_name.sh
 ```
 Replace `experiment_name` with the desired experiment script path. Each experiment will produce, fold and calculate statistics for each considered feature.
 
-## General Usage
-To reinforce your desired feature, you can define and compute a custom reward function within following these steps:
-
-  1. Add Your Custom Functions: Create your own reward function tailored to the feature you want to optimize.
-  2. Calculate the Reward: Use your custom function to compute the reward based on your criteria.
-  3. Update the DPO weight: Add the computed reward to the data["weights"] column.
-
-Note: Ensure the correct sign of the reward based on your optimization goal: 
-  - Use positive values to maximize the scored value.
-  - Use negative values to minimize the scored value.
-    
-In case your are planning to use CLEAN, you will need to clone and set it up as explained in the official [CLEAN repository](https://github.com/tttianhao/CLEAN), and indicate the path in your code. 
-
-Additional notes: 
-- lora adapters
-
 
 ## Troubleshooting
 
@@ -192,7 +173,8 @@ Please take a look at the documentation for more details on how to configure and
 Feel free to contribute or raise issues if you encounter any problems! We are working to make it more accessible and detailed
 ## Work in Progress
 
-Change the batch size
+-[] LoRa example
+
 ## References
 
 - ESM1v: "Language models enable zero-shot prediction of the effects of mutations on protein function" Joshua Meier, Roshan Rao, Robert Verkuil, Jason Liu, Tom Sercu, Alexander Rives; doi: https://doi.org/10.1101/2021.07.09.450648. Computed using https://github.com/seanrjohnson/protein_gibbs_sampler/
