@@ -22,8 +22,8 @@ This is the repository for the paper [*Guiding Generative Protein Language Model
 
 ProtRL allows you to:
 
-- **Train offline** on pre-existing experimental data.  
-- **Train online** with custom scoring functions in an iterative loop.
+- [**Train offline**](#offline-training) on pre-existing experimental data.  
+- [**Train online**](#online-training) with custom scoring functions in an iterative loop.
 
 Based on the GRPO implementation in [Hugging Face’s TRL library](https://huggingface.co/docs/trl/main/en/grpo_trainer), we have extended the trainer to support:
 
