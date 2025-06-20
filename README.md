@@ -147,7 +147,7 @@ The example directory includes ```tiny-llama``` directory, which demonstrates de
 
 ```bash
 cd example/GRPO
-bash ProtRL_tiny.sh
+bash ProtRL-tiny.sh
 ```
 
 This generates a TinyLLaMA model, runs RL training, and plots length reduction over iterations.
