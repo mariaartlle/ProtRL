@@ -140,11 +140,11 @@ pip install -r requirements.txt
 
 ## Example 
 
-The example directory includes ProtRL_tiny.sh, which demonstrates decreasing sequence length to 50 amino acids using a TinyLLaMA model on a single GPU (≥ 10 GB)
+The example directory includes ```tiny-llama``` directory, which demonstrates decreasing sequence length to 50 amino acids using a TinyLLaMA model on a single GPU (≥ 10 GB)
 
 Always show details
 ```bash
-cd example
+cd example/GRPO
 bash ProtRL_tiny.sh
 ```
 
