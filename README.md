@@ -147,6 +147,8 @@ bash ProtRL-local.sh
 ```
 
 This generates a TinyLLaMA model, runs RL training, and plots length reduction over iterations.
+![imagen](https://github.com/user-attachments/assets/c398a4c2-8d4b-414b-825d-10628b579d53)
+
 
 ### Carbonic Anhydrase Fold in ZymCTRL
 We also provide a more complex example in ```example/ZymCTRL-fold```, where the fold of carbonic anhydrase is progressively adapted over RL iterations. In this case esm-fold is required and a GPU of 80GB. 
