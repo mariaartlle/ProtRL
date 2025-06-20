@@ -173,7 +173,7 @@ Please take a look at the documentation for more details on how to configure and
 Feel free to contribute or raise issues if you encounter any problems! We are working to make it more accessible and detailed
 ## Work in Progress
 
--[ ] LoRa example
+[ ] LoRa example
 
 ## References
 
