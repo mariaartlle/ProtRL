@@ -4,7 +4,6 @@
 ProtRL is a Reinforcement Learning (RL) framework for autoregressive protein Language Models (pLMs).
 Currently we have implemented the following algorithms: 
 - Weighted DPO
-- Ranked DPO
 - GRPO
 
 This is the repository for the paper [*Guiding Generative Protein Language Models with Reinforcement Learning*](https://arxiv.org/abs/2412.12979). 
