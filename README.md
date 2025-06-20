@@ -144,7 +144,6 @@ pip install -r requirements.txt
 ### TinyLLaMA Length Reduction
 The example directory includes ```tiny-llama``` directory, which demonstrates decreasing sequence length to 50 amino acids using a TinyLLaMA model that can be run locally on a single GPU. 
 
-Always show details
 ```bash
 cd example/GRPO
 bash ProtRL_tiny.sh
