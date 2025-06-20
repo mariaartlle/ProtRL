@@ -1,9 +1,9 @@
+# ProtRL: Direct Preference Optimization for Protein Language Models
 
 <img src="https://github.com/user-attachments/assets/b5040d0c-74de-4627-bd2a-3e6344326ef5" width="350"  align="center">
 
-# ProtRL: Direct Preference Optimization for Protein Language Models
 
-ProtRL is a Reinforcement Learning (RL) framework for autoregressive protein Language Models (pLMs).
+A Reinforcement Learning (RL) framework for autoregressive protein Language Models (pLMs).
 Currently we have implemented the following algorithms: 
 - Weighted DPO
 - GRPO
@@ -30,14 +30,14 @@ ProtRL allows you to:
 Based on the GRPO implementation in [Hugging Face’s TRL library](https://huggingface.co/docs/trl/main/en/grpo_trainer), we have extended the trainer to support:
 
 1. Passing custom datasets at each iteration  
-2. Weighted and ranked variants of DPO (not available in the standard Hugging Face trainer)
+2. Weighted variant of DPO (not available in the standard Hugging Face trainer)
 
 ### Quickstart Example
 
 ```python
 from src.utils import *
 from src.pLM_weigtedDPO import weighted_DPO
-from src.pLM_rankedDPO import ranked_DPO 
+from src.pLM_GRPO import pLM_GRPOTrainer
 from trl import GRPOConfig, GRPOTrainer
 
 training_args = GRPOConfig(output_dir="ZymCTRL-wDPO", logging_steps=10)
@@ -114,7 +114,7 @@ from trl import GRPOConfig, GRPOTrainer
 
 training_args = GRPOConfig(output_dir="ZymCTRL-GRPO", logging_steps=10)
 
-trainer = pLM_wDPOTrainer( #pLM_rDPOTrainer, pLM_GRPOTrainer
+trainer = weighted_DPO( #pLM_GRPOTrainer
     model= "AI4PD/ZymCTRL",
     reward_funcs=reward_len,
     args=training_args,
