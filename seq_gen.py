@@ -21,6 +21,18 @@ def calculatePerplexity(input_ids,model,tokenizer):
         outputs = model(input_ids, labels=input_ids)
     loss, logits = outputs[:2]
     return math.exp(loss)
+
+def calculateloglikelihood(input_ids, model, ref_model, tokenizer):
+    "This function computes perplexities for the generated sequences"
+    with torch.no_grad():
+        outputs_model = model(input_ids, labels=input_ids)
+        outputs_ref_model = ref_model(input_ids, labels=input_ids)
+
+    loss, logits = outputs_model[:2]
+    ref_loss, logits=outputs_ref_model[:2]
+    i_reward = -(loss - ref_loss)
+    return i_reward
+    
         
 def main(label, model,special_tokens,device,tokenizer):
 
@@ -44,14 +56,15 @@ def main(label, model,special_tokens,device,tokenizer):
         print("not enough sequences with short lengths!!")
 
     # Compute perplexity for every generated sequence in the batch
-    ppls = [(tokenizer.decode(output), calculatePerplexity(output, model, tokenizer)) for output in new_outputs ]
-
+    ppls = [(tokenizer.decode(output), calculatePerplexity(output, model, tokenizer), calculateloglikelihood(output, model, ref_model, tokenizer)) for output in new_outputs ]
+    
+    
     # Sort the batch by perplexity, the lower the better
     ppls.sort(key=lambda i:i[1]) # duplicated sequences?
 
     # Final dictionary with the results
     sequences={}
-    sequences[label] = [(remove_characters(x[0], special_tokens), x[1]) for x in ppls]
+    sequences[label] = [(remove_characters(x[0], special_tokens), x[1], x[2]) for x in ppls]
 
     return sequences
 
