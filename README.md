@@ -21,13 +21,17 @@ This is the repository for the paper [*Guiding Generative Protein Language Model
 
 ## About ProtRL
 
-This implementation allows you to: 
-- train offline with experimental data
-- train online with a scoring fuction set by you
+ProtRL allows you to:
 
-Starting from GRPO implementation in [Hugging face](https://huggingface.co/docs/trl/main/en/grpo_trainer), we have implemented a new version to pass custom databases each iteration, and weighted and ranked version of DPO (currently non present in Hugging Face Trainer).
+- **Train offline** on pre-existing experimental data.  
+- **Train online** with custom scoring functions in an iterative loop.
 
-For example, to train your mode now you can: 
+Based on the GRPO implementation in [Hugging Face’s TRL library](https://huggingface.co/docs/trl/main/en/grpo_trainer), we have extended the trainer to support:
+
+1. Passing custom datasets at each iteration  
+2. Weighted and ranked variants of DPO (not available in the standard Hugging Face trainer)
+
+### Quickstart Example
 
 ```python
 from src.utils import *
@@ -49,22 +53,19 @@ trainer = pLM_wDPOTrainer( #pLM_rDPOTrainer, pLM_GRPOTrainer
 trainer.train()
 ```
 ### Usage
-
-There are two different use cases of this script:
-1 - To train offline on experimental data
-2 -  To train online, with syntetic data, setting specific scoring functions or rules
-
-### Offline training
-You can use the script ```train_exp.py``` that takes in input a csv file that must have colums with the already formatted sequences and a weight colum corresponding for each sequence.  
-
+Use ```train_exp.py```, which expects a CSV file with columns:
+- prompt: prompt if any (in case of conditional generation)
+- sequence: pre-formatted protein sequences
+- advantage: numerical weight for each sequence
+  
 ```python 
 python train_exp.py --model_dir "AI4PD/ZymCTRL" --csv "training_data.csv"
 ```
 
 
-### Online training
-In case of online training, we set up an automatic cycle that iteratevely generate sequences, score them and train the model.
-In case of GRPO, and in case of simple rewards function (leght, aa ratios, hydrophobicity...) you can directly use GRPO HF standard impelentation. For example in case of lenghts:
+#### Online training
+1. Simple GRPO (Hugging Face)
+For straightforward rewards (e.g., sequence length, amino-acid ratios), use the standard GRPO trainer:
 
 ```python 
 GRPO_trainer:
@@ -101,9 +102,7 @@ trainer = GRPO_trainer(
 trainer.train()
 trainer.save_model() 
 ```
-In many cases, the reward can be very complex and for that reason we have implemented a different version of GRPO, where at each iteration, sequences are explicity generated, saved and scored. This is particulary useful in case of we would like to run in arrays in cpu's.
-In this case, the reference model must be explicity passed, while the reward function can be set to none. Underhood, this script takes the dataset, and consider the rewards as well. (in the original implementation of GRPO only prompts and completitions where considered, and they are used to align the model to the desired objective. 
-For weighted DPO and ranked DPO, the application and the structure is the same, but the loss function slightly change. 
+For complex pipelines—where you explicitly generate, save, and externally score sequences each iteration—use our extended trainers. This is ideal for CPU clusters or custom scoring services:
 
 ```python
 from src.utils import *
@@ -125,15 +124,13 @@ trainer = pLM_wDPOTrainer( #pLM_rDPOTrainer, pLM_GRPOTrainer
 trainer.train()
 ```
 
-For orignal DPO we reccomend HF implementaion. 
+For the original DPO algorithm, we recommend the Hugging Face DPO Trainer.
 
 This 3 different loss functions were adapted from the firsts described in [Widatalla et al., 2024](https://www.biorxiv.org/content/10.1101/2024.05.20.595026v1.abstract). You can find detailed explanations for each loss function and its changes in formulation in the Methods section of the [paper](https://arxiv.org/abs/2412.12979).
 
 *Note*: Weights and advantages are treated as "the higher, the better." If your scoring function is designed to be minimized, please multiply it by -1.
 
 ## Installation
-
-The software needed to run ProtRL can be found in `requeriments.txt`. To set up the environment, execute the following command inside your desired working environment:
 
 ```bash
 git clone https://github.com/AI4PDLab/ProtRL.git
@@ -143,18 +140,17 @@ pip install -r requirements.txt
 
 ## Example 
 
-In the folder `example` a very simple scripr is reported, with the objective to reduce the lenght over the different iterations using a tiny-llama. Given the size of the model this can be run in a 10GB gpu locally. 
+The example directory includes ProtRL_tiny.sh, which demonstrates decreasing sequence length to 50 amino acids using a TinyLLaMA model on a single GPU (≥ 10 GB)
 
-To set it up, install the requirements pip install requirements, and run the script from your terminal as bash ProtRL_tiny.sh. It will automatically generate a tiny lama model and plot the results in a graph.  
+Always show details
+```bash
+cd example
+bash ProtRL_tiny.sh
+```
 
-ProtRL is reported as a very simple script with the objective of decreasing the length over the different iterations to reach a length of 60 amino acids. In the `Experiments` folder, you can find the scripts for experiments that implement more complex scoring functions such as protein folds, functional annotation of enzymes, and experimental data. If you are interested in optimizing for other protein features, you can use `DPO_pLM.py` as a template for your custom RL experiments.
+This generates a TinyLLaMA model, runs RL training, and plots length reduction over iterations.
 
-First of all, you will need to set up ZymCTRL or the pLM of your choice. In our case, we downloaded the [HuggingFace's ZymCTRL](https://huggingface.co/AI4PD/ZymCTRL) repository locally or used it directly from the repo, taking advantage of Huggingface's `transformers` API (AI4PD/ZymCTRL). 
-
-With this simple task, we observe that the three modes achieve the desired goal within just a few iterations. While the paired and ranked modes reach the objectives more quickly, they are more prone to catastrophic forgetting compared to the weighted mode. The weighted mode proves to be more stable, particularly in low-data scenarios. It is likely that, with a more complex scoring function and additional data, the ranked and paired algorithms could demonstrate improved performance and behavior.
-
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/e7e89f70-dad0-4731-afbf-37970718e92a" />
-
+### Experiments
 
 To reproduce the experiments of our paper, you can find all the scripts in the `Experiments` folder. Given the size and computational needs of pLMs, each one of the experiments were executed in one H100 GPU, with differing times of execution. All the parameters and external data used in the experiments can be found in this repo. The `.sh` scripts can be executed from the same folder to conduct each experiment, they have been built to work on a SLURM based cluster, given the need of GPU-intensive computing. To reproduce the results run: 
 
