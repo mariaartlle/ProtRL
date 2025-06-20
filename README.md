@@ -147,7 +147,10 @@ bash ProtRL-local.sh
 ```
 
 This generates a TinyLLaMA model, runs RL training, and plots length reduction over iterations.
-![imagen](https://github.com/user-attachments/assets/c398a4c2-8d4b-414b-825d-10628b579d53)
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/f51583e4-9f90-4170-acab-a4473503fdf3" width="350">
+
+</div>
 
 
 ### Carbonic Anhydrase Fold in ZymCTRL
