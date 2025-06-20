@@ -124,6 +124,7 @@ trainer = pLM_wDPOTrainer( #pLM_rDPOTrainer, pLM_GRPOTrainer
 
 trainer.train()
 ```
+> **_NOTE:_** The reward_funcs is ignored and can be set as a function always returning 0
 
 For the original DPO algorithm, we recommend the Hugging Face DPO Trainer.
 
