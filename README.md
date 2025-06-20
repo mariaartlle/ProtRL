@@ -167,7 +167,7 @@ Replace `experiment_name` with the desired experiment script path. Each experime
 ## Notes
 seq_gen.py in the main directory generates a fasta file with this format ```>fasta_name /t perplexity /t intrinsic_reward /n sequence```
 
-we discontinued ranked DPO as theoretically it will always be outperformed by weighted DPO
+We discontinue ranked DPO as theoretically it will always be outperformed by weighted DPO
 
 ## Troubleshooting
 
