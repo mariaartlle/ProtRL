@@ -165,8 +165,9 @@ sbatch experiment_name.sh
 Replace `experiment_name` with the desired experiment script path. Each experiment will produce, fold and calculate statistics for each considered feature.
 
 ## Notes
-> seq_gen.py in the main directory generates a fasta file with this format ```>fasta_name /t perplexity /t intrinsic_reward /n sequence```
-> we discontinued ranked DPO as theoretically it will always be outperformed by weighted DPO
+seq_gen.py in the main directory generates a fasta file with this format ```>fasta_name /t perplexity /t intrinsic_reward /n sequence```
+
+we discontinued ranked DPO as theoretically it will always be outperformed by weighted DPO
 
 ## Troubleshooting
 
