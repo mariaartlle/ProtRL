@@ -41,7 +41,7 @@ do
     fi
 
     echo Sequence generation started
-    python3 seq_gen.py --iteration_num $i --label $label
+    python seq_gen.py --iteration_num $i --label $label
 
     echo dataset generation 
     python dataset_gen.py --iteration_num $i --label $label --model_dir $model_directory 
