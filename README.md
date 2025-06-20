@@ -53,8 +53,8 @@ trainer = pLM_wDPOTrainer( #pLM_rDPOTrainer, pLM_GRPOTrainer
 
 trainer.train()
 ```
-### Usage
-#### Offline training
+## Usage
+### Offline training
 Use ```train_exp.py```, which expects a CSV file with columns:
 - prompt: prompt if any (in case of conditional generation)
 - sequence: pre-formatted protein sequences
@@ -65,7 +65,7 @@ python train_exp.py --model_dir "AI4PD/ZymCTRL" --csv "training_data.csv"
 ```
 
 
-#### Online training
+### Online training
 1. We reccomend using the HF implementation of GRPO for straightforward rewards (e.g., sequence length, amino-acid ratios), use the standard GRPO trainer:
 
 ```python 
