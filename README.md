@@ -33,7 +33,10 @@ There are two different use cases of this script:
 ### Offline training
 You can use the script ```train_exp.py``` that takes in input 
 ```python 
-python train_exp.py --model_dir "AI4PD/ZymCTRL" --csv "training_data.csv" ```
+python train_exp.py --model_dir "AI4PD/ZymCTRL" --csv "training_data.csv"
+```
+
+
 ### Online training
 
 In case of GRPO, and in case of simple rewards function (leght, aa ratios, hydrophobicity...) you can directly use GRPO HF standard impelentation. For example in case of lenghts:
