@@ -107,7 +107,7 @@ if __name__=='__main__':
                             'batch': i,
                             'index': index,
                             'pepr': float(val[1]),
-                            'fasta': f">{label}_{i}_{index}_iteration{iteration_num}\t{val[1]}\n{val[0]}\n"
+                            'fasta': f">{label}_{i}_{index}\t{val[1]}\t{val[2]}\n{val[0]}\n"
                         }
                         all_sequences.append(sequence_info)
         #all_sequences.sort(key=lambda x: x['pepr'])
