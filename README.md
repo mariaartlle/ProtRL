@@ -106,7 +106,6 @@ For complex pipelines—where you explicitly generate, save, and externally scor
 ```python
 from src.utils import *
 from src.pLM_weigtedDPO import weighted_DPO
-from src.pLM_rankedDPO import ranked_DPO 
 from trl import GRPOConfig, GRPOTrainer
 
 training_args = GRPOConfig(output_dir="ZymCTRL-GRPO", logging_steps=10)
@@ -167,7 +166,7 @@ Replace `experiment_name` with the desired experiment script path. Each experime
 
 ## Notes
 > seq_gen.py in the main directory generates a fasta file with this format ```>fasta_name /t perplexity /t intrinsic_reward /n sequence```
-> we discontinued ranked DPO as theoretically it will always outperform the 
+> we discontinued ranked DPO as theoretically it will always be outperformed by weighted DPO
 
 ## Troubleshooting
 
