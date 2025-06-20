@@ -10,7 +10,8 @@ Currently we have implemented the following algorithms:
 This is the repository for the paper [*Guiding Generative Protein Language Models with Reinforcement Learning*](https://arxiv.org/abs/2412.12979). 
 
 ### Table of Content
-- [About ProtRL](#about-dpo_plm)
+- [About ProtRL](#about-protrl)
+- [Usage](#usage)
 - [Installation](#installation)
 - [Example](#example)
 - [General Usage](#generalusage)
@@ -26,19 +27,43 @@ This implementation allows you to:
 
 Starting from GRPO implementation in [Hugging face](https://huggingface.co/docs/trl/main/en/grpo_trainer), we have implemented a new version to pass custom databases each iteration, and weighted and ranked version of DPO (currently non present in Hugging Face Trainer).
 
+For example, to train your mode now you can: 
+
+```python
+from src.utils import *
+from src.pLM_weigtedDPO import weighted_DPO
+from src.pLM_rankedDPO import ranked_DPO 
+from trl import GRPOConfig, GRPOTrainer
+
+training_args = GRPOConfig(output_dir="ZymCTRL-wDPO", logging_steps=10)
+
+trainer = pLM_wDPOTrainer( #pLM_rDPOTrainer, pLM_GRPOTrainer
+    model= "AI4PD/ZymCTRL",
+    reward_funcs=reward_len,
+    args=training_args,
+    train_dataset = train_dataset,
+    eval_dataset = eval_dataset,
+    processing_class=tokenizer,
+)
+
+trainer.train()
+```
+###Usage
+
 There are two different use cases of this script:
-1 -  To train online, each iteration set a standard datasets according HF to have a reward, to then be used. Each iteration generate sequences and save it as: prompt, completition and reward. The reward, will be then used to feedback the model. 
-2 - To train on experimental data
+1 - To train offline on experimental data
+2 -  To train online, with syntetic data, setting specific scoring functions or rules
 
 ### Offline training
-You can use the script ```train_exp.py``` that takes in input 
+You can use the script ```train_exp.py``` that takes in input a csv file that must have colums with the already formatted sequences and a weight colum corresponding for each sequence.  
+
 ```python 
 python train_exp.py --model_dir "AI4PD/ZymCTRL" --csv "training_data.csv"
 ```
 
 
 ### Online training
-
+In case of online training, we set up an automatic cycle that iteratevely generate sequences, score them and train the model.
 In case of GRPO, and in case of simple rewards function (leght, aa ratios, hydrophobicity...) you can directly use GRPO HF standard impelentation. For example in case of lenghts:
 
 ```python 
