@@ -139,8 +139,8 @@ pip install -r requirements.txt
 ```
 
 ## Example 
-
-The example directory includes ```tiny-llama``` directory, which demonstrates decreasing sequence length to 50 amino acids using a TinyLLaMA model on a single GPU (≥ 10 GB)
+### TinyLLaMA Length Reduction
+The example directory includes ```tiny-llama``` directory, which demonstrates decreasing sequence length to 50 amino acids using a TinyLLaMA model that can be run locally on a single GPU. 
 
 Always show details
 ```bash
@@ -149,6 +149,9 @@ bash ProtRL_tiny.sh
 ```
 
 This generates a TinyLLaMA model, runs RL training, and plots length reduction over iterations.
+
+### Carbonic Anhydrase Fold Adaptation
+We also provide a more complex example in example/ZymCTRL-fold, where the fold of carbonic anhydrase is progressively adapted over RL iterations. In this case esm-fold is required and a GPU of 80GB. 
 
 ### Experiments
 
