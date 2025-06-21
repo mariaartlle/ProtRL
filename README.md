@@ -54,6 +54,10 @@ trainer = pLM_wDPOTrainer( #pLM_rDPOTrainer, pLM_GRPOTrainer
 trainer.train()
 ```
 ## Usage
+Trainer accepts the datasets in a HF standard format, for example: 
+```python
+{"prompt": "The sky is", "completion": " blue."}
+```
 ### Offline training
 Use ```train_exp.py```, which expects a CSV file with columns:
 - prompt: prompt if any (in case of conditional generation)
