@@ -67,7 +67,7 @@ Use ```train_exp.py```, which expects a CSV file with columns:
 ```python 
 python train_exp.py --model_dir "AI4PD/ZymCTRL" --csv "training_data.csv"
 ```
-
+the code will generate the dataset for you and train your model. 
 
 ### Online training
 1. We reccomend using the HF implementation of GRPO for straightforward rewards (e.g., sequence length, amino-acid ratios), use the standard GRPO trainer:
