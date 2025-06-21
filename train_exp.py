@@ -36,15 +36,12 @@ args = parser.parse_args()
 
 
 CONFIG = {
-        "model_dir":      args.model_dir,
-        "csv":            args.csv,
-        "output":         args.output,
         "learning_rate":  args.learning_rate,
         "num_epochs":     args.num_epochs,
         "split_percent":  args.split_percent,
         "beta":           args.beta,
         "seed":           42,
-    }
+        }
 
 def seed_everything(seed):
     torch.manual_seed(seed)
@@ -94,9 +91,6 @@ tokenizer = AutoTokenizer.from_pretrained(args.model_dir,
                                           use_fast=True)
 
 
-
-model = AutoModelForCausalLM.from_pretrained(CONFIG["model_dir"]) 
-
 training_args = GRPOConfig(output_dir=args.output, 
                            logging_steps=100,
                            beta=CONFIG["beta"],
@@ -113,7 +107,7 @@ training_args = GRPOConfig(output_dir=args.output,
 
 
 trainer = pLM_GRPOTrainer(
-    model= model,
+    model= args.model_dir,
     ref_model = args.model_dir,
     reward_funcs=reward_len,
     args=training_args,
