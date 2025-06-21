@@ -1,7 +1,6 @@
 
 from src.utils import *
 from src.pLM_weigtedDPO import weighted_DPO
-from src.pLM_rankedDPO import ranked_DPO
 from src.pLM_GRPO import pLM_GRPOTrainer
 
 from datasets import load_dataset, Dataset
@@ -36,7 +35,7 @@ parser.add_argument("--beta", type=float, default=0.1)
 args = parser.parse_args()
 
 
-config = {
+CONFIG = {
         "model_dir":      args.model_dir,
         "csv":            args.csv,
         "output":         args.output,
@@ -44,7 +43,7 @@ config = {
         "num_epochs":     args.num_epochs,
         "split_percent":  args.split_percent,
         "beta":           args.beta,
-        "seed":           args.seed,
+        "seed":           42,
     }
 
 def seed_everything(seed):
@@ -96,8 +95,7 @@ tokenizer = AutoTokenizer.from_pretrained(args.model_dir,
 
 
 
-model = args.model_dir
-
+model = AutoModelForCausalLM.from_pretrained(CONFIG["model_dir"]) 
 
 training_args = GRPOConfig(output_dir=args.output, 
                            logging_steps=100,
@@ -121,7 +119,6 @@ trainer = pLM_GRPOTrainer(
     args=training_args,
     train_dataset = train_dataset,
     eval_dataset = eval_dataset,
-    processing_class=tokenizer,
-    optimizers = (optimizer, scheduler))
+    processing_class=tokenizer}
 
 trainer.train()
