@@ -113,6 +113,6 @@ trainer = pLM_GRPOTrainer(
     args=training_args,
     train_dataset = train_dataset,
     eval_dataset = eval_dataset,
-    processing_class=tokenizer}
+    processing_class=tokenizer)
 
 trainer.train()
