@@ -29,11 +29,14 @@ parser.add_argument("--output", type=str, default="./output_")
 parser.add_argument("--learning_rate", type=float, default=2e-5)
 parser.add_argument("--num_epochs", type=int, default=1)
 parser.add_argument("--split_percent", type=float, default=0.2)
-parser.add_argument("--beta", type=float, default=0.1)
-
+parser.add_argument("--ref_model", type=str, required=False)
 
 args = parser.parse_args()
 
+if args.ref_model is None:
+    ref_model = args.model_dir
+else:
+    ref_model = args.ref_model
 
 CONFIG = {
         "learning_rate":  args.learning_rate,
@@ -108,7 +111,7 @@ training_args = GRPOConfig(output_dir=args.output,
 
 trainer = pLM_GRPOTrainer(
     model= args.model_dir,
-    ref_model = args.model_dir,
+    ref_model = ref_model,
     reward_funcs=reward_len,
     args=training_args,
     train_dataset = train_dataset,
@@ -116,3 +119,4 @@ trainer = pLM_GRPOTrainer(
     processing_class=tokenizer)
 
 trainer.train()
+trainer.save_model()
