@@ -69,6 +69,13 @@ class weighted_DPO(GRPOTrainer):
             dataset = self.train_dataset
             
         return RandomSampler(self.train_dataset)
+        
+    def _get_eval_sampler(self, dataset: Optional[Dataset] = None) -> Sampler:
+
+        if dataset is None:
+            dataset = self.eval_dataset
+            
+        return RandomSampler(self.eval_dataset)
 
     def _generate_and_score_completions(
         self, inputs: list[dict[str, Union[torch.Tensor, Any]]]
