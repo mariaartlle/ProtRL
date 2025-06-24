@@ -86,10 +86,15 @@ if __name__=='__main__':
     else:
       model_name = f'./output_iteration{iteration_num}'
     
-    print(f'{model_name} loaded')
-    tokenizer = AutoTokenizer.from_pretrained("AI4PD/ZymCTRL") # change to ZymCTRL location
+    if iteration_num == 0:
+        model_name = args.model_dir
+
+    print(f'Model {model_name} has been loaded')
+
+    tokenizer = AutoTokenizer.from_pretrained(args.model_dir) # change to ZymCTRL location
     model = GPT2LMHeadModel.from_pretrained(model_name).to(device) # change to ZymCTRL location
     special_tokens = ['<start>', '<end>', '<|endoftext|>','<pad>',' ', '<sep>']
+    ref_model = GPT2LMHeadModel.from_pretrained("AI4PD/ZymCTRL").to(device) # change to ZymCTRL location
 
     label = ec_label
     
