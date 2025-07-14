@@ -11,3 +11,4 @@ deepspeed
 accelerate
 matplotlib
 seaborn
+database
