@@ -1,0 +1,13 @@
+pip==25.0.1
+transformers
+trl
+bitsandbytes
+evaluate
+peft
+torchaudio
+torchvision
+tensorboard
+deepspeed
+accelerate
+matplotlib
+seaborn
