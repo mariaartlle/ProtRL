@@ -56,7 +56,7 @@ trainer.train()
 ## Usage
 Trainer accepts the datasets in a HF standard format, for example: 
 ```python
-{"prompt": "The sky is", "completion": " blue."}
+{"prompt": "The sky is", "completion": " blue.", "advantage":10}
 ```
 ### Offline training
 Use ```train_exp.py```, which expects a CSV file with columns:
