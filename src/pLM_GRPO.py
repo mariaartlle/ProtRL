@@ -51,13 +51,13 @@ class pLM_GRPOTrainer(GRPOTrainer):
         # Reference model
         model_init_kwargs = args.model_init_kwargs or {}
         print(ref_model, model)
-        ref_model = AutoModelForCausalLM.from_pretrained(ref_model).to("cuda")
+        # ref_model = AutoModelForCausalLM.from_pretrained(ref_model).to("cuda")
 
         if self.beta == 0.0:
             # If beta is 0.0, the reference model is not needed
             self.ref_model = None
         elif is_deepspeed_zero3_enabled():
-            self.ref_model = AutoModelForCausalLM.from_pretrained(ref_model, **model_init_kwargs)
+            # self.ref_model = AutoModelForCausalLM.from_pretrained(ref_model, **model_init_kwargs)
         else:
             # If PEFT configuration is not provided, create a reference model based on the initial model.
             self.ref_model = create_reference_model(ref_model)
