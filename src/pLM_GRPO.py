@@ -51,6 +51,8 @@ class pLM_GRPOTrainer(GRPOTrainer):
         model_init_kwargs = args.model_init_kwargs or {}
         print(ref_model, model)
         # ref_model = AutoModelForCausalLM.from_pretrained(ref_model).to("cuda")
+        model_dir = '/users/nferruz/martigues/scratch/juan_progen2/FT3_redo/models/checkpoint-1180/'
+        ref_model = ProGenForCausalLM.from_pretrained(model_dir).to('cuda')
 
         if self.beta == 0.0:
             # If beta is 0.0, the reference model is not needed
