@@ -58,9 +58,9 @@ class pLM_GRPOTrainer(GRPOTrainer):
             self.ref_model = None
         # elif is_deepspeed_zero3_enabled():
             # self.ref_model = AutoModelForCausalLM.from_pretrained(ref_model, **model_init_kwargs)
-        else:
-            # If PEFT configuration is not provided, create a reference model based on the initial model.
-            self.ref_model = create_reference_model(ref_model)
+        # else:
+        #     # If PEFT configuration is not provided, create a reference model based on the initial model.
+        #     self.ref_model = create_reference_model(ref_model)
     
     def _get_train_sampler(self, dataset: Optional[Dataset] = None) -> Sampler:
 
