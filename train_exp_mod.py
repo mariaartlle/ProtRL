@@ -104,9 +104,6 @@ fast_tokenizer = PreTrainedTokenizerFast(tokenizer_object=tokenizer)
 fast_tokenizer.eos_token = '<|eos|>'
 fast_tokenizer.pad_token = fast_tokenizer.eos_token
 
-# try 
-# fast_tokenizer = PreTrainedTokenizerFast(tokenizer_file='/users/nferruz/martigues/scratch/juan_progen2/FT2_redo/tokenizer_progen2.json')
-
 device = 'cuda:0'
 
 model = ProGenForCausalLM.from_pretrained(args.model_dir).to(device)
@@ -125,7 +122,8 @@ training_args = GRPOConfig(output_dir=args.output,
                            eval_steps = 500, 
                            save_total_limit = 1,
                            save_steps = 5,
-                           num_generations = 8)
+                           num_generations = 8,
+                           gradient_checkpoint=False)
 
 
 trainer = pLM_GRPOTrainer(
