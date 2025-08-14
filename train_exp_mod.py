@@ -14,6 +14,9 @@ from torch import nn
 from torch.optim.lr_scheduler import LambdaLR
 from torch.optim import AdamW
 from accelerate.utils import broadcast_object_list, gather, gather_object, is_peft_model, set_seed
+from tokenizers import Tokenizer
+from progen.progen2.models.progen.modeling_progen import ProGenForCausalLM
+from transformers import PreTrainedTokenizerFast
 import argparse
 import torch
 import numpy as np
