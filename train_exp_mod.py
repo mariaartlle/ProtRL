@@ -123,7 +123,7 @@ training_args = GRPOConfig(output_dir=args.output,
                            save_total_limit = 1,
                            save_steps = 5,
                            num_generations = 8,
-                           gradient_checkpoint=False)
+                           gradient_checkpointing=False)
 
 
 trainer = pLM_GRPOTrainer(
