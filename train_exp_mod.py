@@ -101,8 +101,8 @@ eval_dataset   = split['test']
 
 tokenizer = Tokenizer.from_file('/users/nferruz/martigues/scratch/juan_progen2/FT2_redo/tokenizer_progen2.json')
 fast_tokenizer = PreTrainedTokenizerFast(tokenizer_object=tokenizer)
-# fast_tokenizer.eos_token = '<|eos|>'
-# fast_tokenizer.pad_token = fast_tokenizer.eos_token
+fast_tokenizer.eos_token = '<|eos|>'
+fast_tokenizer.pad_token = fast_tokenizer.eos_token
 
 device = 'cuda:0'
 
