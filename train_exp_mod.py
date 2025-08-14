@@ -104,8 +104,8 @@ fast_tokenizer = PreTrainedTokenizerFast(tokenizer_object=tokenizer)
 # fast_tokenizer.eos_token = '<|eos|>'
 # fast_tokenizer.pad_token = fast_tokenizer.eos_token
 
-model = ProGenForCausalLM.from_pretrained(model_dir).to(device)
-ref_model = ProGenForCausalLM.from_pretrained(model_dir).to(device)
+model = ProGenForCausalLM.from_pretrained(args.model_dir).to(device)
+ref_model = ProGenForCausalLM.from_pretrained(args.model_dir).to(device)
 
 
 training_args = GRPOConfig(output_dir=args.output, 
