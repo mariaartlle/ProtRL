@@ -99,13 +99,13 @@ eval_dataset   = split['test']
                                         #   add_bos_token=False,
                                         #   use_fast=True)
 
-# tokenizer = Tokenizer.from_file('/users/nferruz/martigues/scratch/juan_progen2/FT2_redo/tokenizer_progen2.json')
-# fast_tokenizer = PreTrainedTokenizerFast(tokenizer_object=tokenizer)
-# fast_tokenizer.eos_token = '<|eos|>'
-# fast_tokenizer.pad_token = fast_tokenizer.eos_token
+tokenizer = Tokenizer.from_file('/users/nferruz/martigues/scratch/juan_progen2/FT2_redo/tokenizer_progen2.json')
+fast_tokenizer = PreTrainedTokenizerFast(tokenizer_object=tokenizer)
+fast_tokenizer.eos_token = '<|eos|>'
+fast_tokenizer.pad_token = fast_tokenizer.eos_token
 
 # try 
-fast_tokenizer = PreTrainedTokenizerFast(tokenizer_file='/users/nferruz/martigues/scratch/juan_progen2/FT2_redo/tokenizer_progen2.json')
+# fast_tokenizer = PreTrainedTokenizerFast(tokenizer_file='/users/nferruz/martigues/scratch/juan_progen2/FT2_redo/tokenizer_progen2.json')
 
 device = 'cuda:0'
 
@@ -136,7 +136,7 @@ trainer = pLM_GRPOTrainer(
     args=training_args,
     train_dataset = train_dataset,
     eval_dataset = eval_dataset,
-    processing_class=tokenizer)
+    processing_class=fast_tokenizer)
 
 trainer.train()
 trainer.save_model()
