@@ -35,7 +35,8 @@ set -o pipefail
 # set environment #
 ###################
 
-source /users/nferruz/martigues/self_training/benchmarking/CLEAN/app/.clean/bin/activate
+# source /users/nferruz/martigues/self_training/benchmarking/CLEAN/app/.clean/bin/activate
+source /users/nferruz/martigues/no_backup/ProtRL/LINE1/.protrl/bin/activate
 module load Python/3.10.4-GCCcore-11.3.0
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
