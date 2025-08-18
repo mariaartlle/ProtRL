@@ -47,7 +47,7 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 model_directory="/users/nferruz/martigues/scratch/juan_progen2/FT3_redo/models/checkpoint-1180" # put the path to your local model or a Huggingface's repository (to be called with transformer's API)
 experimental_csv="training_csv_FC.csv"
 
-python /users/nferruz/martigues/no_backup/ProtRL/train_exp_mod.py --model_dir "${model_directory}" --csv "${experimental_csv}"
+python /users/nferruz/martigues/no_backup/ProtRL/train_exp_GRPO.py --model_dir "${model_directory}" --csv "${experimental_csv}"
 
 ###############
 # end message #
