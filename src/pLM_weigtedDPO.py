@@ -19,6 +19,7 @@ import torch.nn.functional as F
 from accelerate.utils import broadcast_object_list, gather, gather_object, is_peft_model, set_seed
 from typing import Any, Optional, Union
 
+from progen.progen2.models.progen.modeling_progen import ProGenForCausalLM
 
 class weighted_DPO(GRPOTrainer):
     def __init__(
