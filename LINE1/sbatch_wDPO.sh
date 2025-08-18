@@ -9,7 +9,7 @@
 #SBATCH --error=job_%x_%j.err
 
 # job name
-#SBATCH --job-name=GRPO_L1FT3
+#SBATCH --job-name=wDPO_L1FT3
 
 # time limit in seconds
 #SBATCH --time=12:00:00

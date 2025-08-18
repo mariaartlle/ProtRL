@@ -126,7 +126,7 @@ training_args = GRPOConfig(output_dir=args.output,
                         #    gradient_checkpointing=False)
 
 
-trainer = pLM_wDPOTrainer(
+trainer = weighted_DPO(
     # model= args.model_dir,
     model= model,
     ref_model = model,
