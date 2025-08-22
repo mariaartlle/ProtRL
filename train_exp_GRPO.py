@@ -128,7 +128,7 @@ training_args = GRPOConfig(output_dir=args.output,
                            save_strategy = "steps",                     
                            eval_steps = 500, 
                         #    save_total_limit = 1,
-                           save_steps = 500,
+                           save_steps = 5,
                            num_generations = 8)#,
                         #    gradient_checkpointing=False)
 
@@ -141,9 +141,9 @@ trainer = pLM_GRPOTrainer(
     args=training_args,
     train_dataset = train_dataset,
     eval_dataset = eval_dataset,
-    processing_class=fast_tokenizer,
-    per_device_train_batch_size=4,
-    per_device_eval_batch_size=2)
+    processing_class=fast_tokenizer)
+    # per_device_train_batch_size=4,
+    # per_device_eval_batch_size=2)
 
 trainer.train()
 trainer.save_model()
