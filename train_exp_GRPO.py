@@ -89,15 +89,15 @@ def generate_dataset(csv_file):
 seed_everything(CONFIG["seed"])
 
 # create dataset
-dataset = generate_dataset(args.csv)
-split = dataset.train_test_split(test_size=CONFIG["split_percent"], seed=CONFIG["seed"], shuffle=True)
+# dataset = generate_dataset(args.csv)
+# split = dataset.train_test_split(test_size=CONFIG["split_percent"], seed=CONFIG["seed"], shuffle=True)
 
-train_dataset = split['train']
-eval_dataset   = split['test'] 
+# train_dataset = split['train']
+# eval_dataset   = split['test'] 
 
 ## because of the amount of similar sequences, pre-split the train and eval datasets to have similar diversity 
-# train_dataset = generate_dataset(args.train_csv)
-# eval_dataset = generate_dataset(args.eval_csv)
+train_dataset = generate_dataset(args.train_csv)
+eval_dataset = generate_dataset(args.eval_csv)
 
 
 ## change for progen tokenizer
@@ -127,10 +127,10 @@ training_args = GRPOConfig(output_dir=args.output,
                            eval_strategy = "epoch",
                            save_strategy = "steps",                     
                            eval_steps = 500, 
-                        #    save_total_limit = 1,
+                           save_total_limit = 1,
                            save_steps = 5,
-                        #    num_generations = 8)#,
-                           num_generations = 2)#,
+                           num_generations = 8)#,
+                        #    num_generations = 2)#,
                         #    gradient_checkpointing=False)
 
 
