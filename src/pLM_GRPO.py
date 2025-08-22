@@ -63,7 +63,8 @@ class pLM_GRPOTrainer(GRPOTrainer):
         else:
             print('B')
             # If PEFT configuration is not provided, create a reference model based on the initial model.
-            self.ref_model = create_reference_model(ref_model)
+            # self.ref_model = create_reference_model(ref_model)
+            ref_model = model
     
     def _get_per_token_logps(self,
             model,
