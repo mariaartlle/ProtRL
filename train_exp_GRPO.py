@@ -141,7 +141,9 @@ trainer = pLM_GRPOTrainer(
     args=training_args,
     train_dataset = train_dataset,
     eval_dataset = eval_dataset,
-    processing_class=fast_tokenizer)
+    processing_class=fast_tokenizer,
+    per_device_train_batch_size=4,
+    per_device_eval_batch_size=2)
 
 trainer.train()
 trainer.save_model()
