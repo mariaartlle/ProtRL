@@ -129,7 +129,8 @@ training_args = GRPOConfig(output_dir=args.output,
                            eval_steps = 500, 
                         #    save_total_limit = 1,
                            save_steps = 5,
-                           num_generations = 8)#,
+                        #    num_generations = 8)#,
+                           num_generations = 4)#,
                         #    gradient_checkpointing=False)
 
 
