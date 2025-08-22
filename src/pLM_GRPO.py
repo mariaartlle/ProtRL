@@ -76,8 +76,8 @@ class pLM_GRPOTrainer(GRPOTrainer):
             This implementation is inspired by the logic of calculating per-token
             values from model logits, similar to a perplexity calculation.
             """
-            batch_size = batch_size or input_ids.size(0)  # Chunk inputs into smaller batches to reduce memory peak
-            print(batch_size)
+            # batch_size = batch_size or input_ids.size(0)  # Chunk inputs into smaller batches to reduce memory peak
+            batch_size = 4
             all_logps = []
             all_entropies = []
             for start in range(0, input_ids.size(0), batch_size):
