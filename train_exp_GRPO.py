@@ -27,7 +27,9 @@ import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--model_dir", type=str, required=True)
-parser.add_argument("--csv", type=str, required=True)
+parser.add_argument("--csv", type=str)
+parser.add_argument("--train_csv", type=str)
+parser.add_argument("--eval_csv", type=str)
 parser.add_argument("--output", type=str, default="./output_")
 parser.add_argument("--learning_rate", type=float, default=2e-5)
 parser.add_argument("--num_epochs", type=int, default=1)
@@ -65,9 +67,9 @@ def reward_len(completions, **kwargs):
     return 0
 
 
-def generate_dataset():
+def generate_dataset(csv_file):
 
-    df = pd.read_csv(args.csv)
+    df = pd.read_csv(csv_file)
     
     rows = []
     for idx, entry in df.iterrows():
@@ -87,11 +89,16 @@ def generate_dataset():
 seed_everything(CONFIG["seed"])
 
 # create dataset
-dataset = generate_dataset()
-split = dataset.train_test_split(test_size=CONFIG["split_percent"], seed=CONFIG["seed"], shuffle=True)
+# dataset = generate_dataset()
+# split = dataset.train_test_split(test_size=CONFIG["split_percent"], seed=CONFIG["seed"], shuffle=True)
 
-train_dataset = split['train']
-eval_dataset   = split['test'] 
+# train_dataset = split['train']
+# eval_dataset   = split['test'] 
+
+## because of the amount of similar sequences, pre-split the train and eval datasets to have similar diversity 
+train_dataset = generate_dataset(args.train_csv)
+eval_dataset = generate_dataset(args.eval_csv)
+
 
 ## change for progen tokenizer
 # tokenizer = AutoTokenizer.from_pretrained(args.model_dir,
@@ -120,8 +127,8 @@ training_args = GRPOConfig(output_dir=args.output,
                            eval_strategy = "epoch",
                            save_strategy = "steps",                     
                            eval_steps = 500, 
-                           save_total_limit = 1,
-                           save_steps = 5,
+                        #    save_total_limit = 1,
+                           save_steps = 500,
                            num_generations = 8)#,
                         #    gradient_checkpointing=False)
 
