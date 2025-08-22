@@ -58,8 +58,10 @@ class pLM_GRPOTrainer(GRPOTrainer):
             # If beta is 0.0, the reference model is not needed
             self.ref_model = None
         elif is_deepspeed_zero3_enabled():
+            print('A')
             self.ref_model = AutoModelForCausalLM.from_pretrained(ref_model, **model_init_kwargs)
         else:
+            print('B')
             # If PEFT configuration is not provided, create a reference model based on the initial model.
             self.ref_model = create_reference_model(ref_model)
     
@@ -77,8 +79,7 @@ class pLM_GRPOTrainer(GRPOTrainer):
             values from model logits, similar to a perplexity calculation.
             """
             batch_size = batch_size or input_ids.size(0)  # Chunk inputs into smaller batches to reduce memory peak
-            print(input_ids)
-            print(len(input_ids))
+
             all_logps = []
             all_entropies = []
             for start in range(0, input_ids.size(0), batch_size):
