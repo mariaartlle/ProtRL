@@ -13,13 +13,13 @@ from trl import GRPOConfig, GRPOTrainer
 from trl.models import create_reference_model            
 
 from transformers import AutoTokenizer
-from trl.trainer.utils import pad
+from trl.trainer.utils import pad, selective_log_softmax
 from torch import nn
-import torch.nn.functional as F
 from accelerate.utils import broadcast_object_list, gather, gather_object, is_peft_model, set_seed
 from typing import Any, Optional, Union
 
 from progen.progen2.models.progen.modeling_progen import ProGenForCausalLM
+
 
 class weighted_DPO(GRPOTrainer):
     def __init__(
@@ -34,9 +34,12 @@ class weighted_DPO(GRPOTrainer):
         callbacks: Optional[list[TrainerCallback]] = None,
         optimizers: tuple[Optional[torch.optim.Optimizer], Optional[torch.optim.lr_scheduler.LambdaLR]] = (None, None),
         peft_config: Optional[Any] = None,
+        batch_size: int=1,
         *,
         ref_model: Union[str, PreTrainedModel],
     ):
+        self.batch_size = batch_size
+        
         super().__init__(
             model=model,
             reward_funcs=reward_funcs,
@@ -53,10 +56,6 @@ class weighted_DPO(GRPOTrainer):
         # Reference model
         model_init_kwargs = args.model_init_kwargs or {}
         print(ref_model, model)
-        # ref_model = AutoModelForCausalLM.from_pretrained(ref_model).to("cuda")
-        model_dir = '/users/nferruz/martigues/scratch/juan_progen2/FT3_redo/models/checkpoint-1180/'
-        ref_model = ProGenForCausalLM.from_pretrained(model_dir).to('cuda')
-
 
         if self.beta == 0.0:
             # If beta is 0.0, the reference model is not needed
@@ -67,19 +66,43 @@ class weighted_DPO(GRPOTrainer):
             # If PEFT configuration is not provided, create a reference model based on the initial model.
             self.ref_model = create_reference_model(ref_model)
     
+    def _get_per_token_logps(self,
+        model,
+        input_ids: torch.Tensor,
+        attention_mask: torch.Tensor,
+        logits_to_keep,
+        batch_size = None,
+    ) -> torch.Tensor:
+        """
+        Calculates the log probability of each token in the input sequences.
+
+        This implementation is inspired by the logic of calculating per-token
+        values from model logits, similar to a perplexity calculation.
+        """
+        batch_size = batch_size or input_ids.size(0)  # Chunk inputs into smaller batches to reduce memory peak
+        all_logps = []
+        all_entropies = []
+        for start in range(0, input_ids.size(0), batch_size):
+            input_ids_batch = input_ids[start : start + batch_size]
+            attention_mask_batch = attention_mask[start : start + batch_size]
+            outputs = model(input_ids, attention_mask=attention_mask)
+            logits = outputs.logits
+            logits = logits[:, :-1, :]
+            logits = logits / self.temperature
+            completion_ids = input_ids_batch[:, -logits_to_keep:]
+            logps = selective_log_softmax(logits, completion_ids)
+            all_logps.append(logps)
+        
+        logps = torch.cat(all_logps, dim=0)
+
+        return logps
+        
     def _get_train_sampler(self, dataset: Optional[Dataset] = None) -> Sampler:
 
         if dataset is None:
             dataset = self.train_dataset
             
         return RandomSampler(self.train_dataset)
-        
-    def _get_eval_sampler(self, dataset: Optional[Dataset] = None) -> Sampler:
-
-        if dataset is None:
-            dataset = self.eval_dataset
-            
-        return RandomSampler(self.eval_dataset)
 
     def _generate_and_score_completions(
         self, inputs: list[dict[str, Union[torch.Tensor, Any]]]
@@ -194,7 +217,6 @@ class weighted_DPO(GRPOTrainer):
         }
     
 
-
     def _compute_loss(self, model, inputs):
         
             # Compute the per-token log probabilities for the model
@@ -204,7 +226,7 @@ class weighted_DPO(GRPOTrainer):
             attention_mask = torch.cat([prompt_mask, completion_mask], dim=1)
             logits_to_keep = completion_ids.size(1)  # we only need to compute the logits for the completion tokens
 
-            per_token_logps = self._get_per_token_logps(model, input_ids, attention_mask, logits_to_keep)
+            per_token_logps = self._get_per_token_logps(model, input_ids, attention_mask, logits_to_keep, batch_size)
             ref_per_token_logps = inputs["ref_per_token_logps"]
 
             advantages = inputs["advantages"]

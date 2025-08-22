@@ -7,6 +7,7 @@ from trl import GRPOConfig, GRPOTrainer
 from transformers import AutoTokenizer, PreTrainedModel, AutoModelForCausalLM, PreTrainedTokenizerBase, TrainerCallback
 from transformers.integrations.deepspeed import is_deepspeed_zero3_enabled
 from torch.utils.data import Sampler, RandomSampler
+import torch.nn.functional as F
 
 from datasets import load_dataset
 from trl import GRPOConfig, GRPOTrainer
@@ -21,7 +22,7 @@ from typing import Any, Optional, Union
 from progen.progen2.models.progen.modeling_progen import ProGenForCausalLM
 
 
-class pLM_GRPOTrainer(GRPOTrainer):
+class ranked_DPO(GRPOTrainer):
     def __init__(
         self,
         model: Union[str, PreTrainedModel],
@@ -34,9 +35,12 @@ class pLM_GRPOTrainer(GRPOTrainer):
         callbacks: Optional[list[TrainerCallback]] = None,
         optimizers: tuple[Optional[torch.optim.Optimizer], Optional[torch.optim.lr_scheduler.LambdaLR]] = (None, None),
         peft_config: Optional[Any] = None,
+        batch_size: int=1,
         *,
         ref_model: Union[str, PreTrainedModel],
     ):
+        self.batch_size = batch_size
+
         super().__init__(
             model=model,
             reward_funcs=reward_funcs,
@@ -64,36 +68,30 @@ class pLM_GRPOTrainer(GRPOTrainer):
             self.ref_model = create_reference_model(ref_model)
     
     def _get_per_token_logps(self,
-            model,
-            input_ids: torch.Tensor,
-            attention_mask: torch.Tensor,
-            logits_to_keep,
-            batch_size = None,
-        ) -> torch.Tensor:
-            """
-            Calculates the log probability of each token in the input sequences.
+        model,
+        input_ids: torch.Tensor,
+        attention_mask: torch.Tensor,
+        logits_to_keep,
+        batch_size = None,
+    ) -> torch.Tensor:
+        
+        batch_size = batch_size or input_ids.size(0)  
+        all_logps = []
+        all_entropies = []
+        for start in range(0, input_ids.size(0), batch_size):
+            input_ids_batch = input_ids[start : start + batch_size]
+            attention_mask_batch = attention_mask[start : start + batch_size]
+            outputs = model(input_ids, attention_mask=attention_mask)
+            logits = outputs.logits
+            logits = logits[:, :-1, :]
+            logits = logits / self.temperature
+            completion_ids = input_ids_batch[:, -logits_to_keep:]
+            logps = selective_log_softmax(logits, completion_ids)
+            all_logps.append(logps)
+        
+        logps = torch.cat(all_logps, dim=0)
 
-            This implementation is inspired by the logic of calculating per-token
-            values from model logits, similar to a perplexity calculation.
-            """
-            batch_size = batch_size or input_ids.size(0)  # Chunk inputs into smaller batches to reduce memory peak
-            all_logps = []
-            all_entropies = []
-            for start in range(0, input_ids.size(0), batch_size):
-                input_ids_batch = input_ids[start : start + batch_size]
-                attention_mask_batch = attention_mask[start : start + batch_size]
-                outputs = model(input_ids, attention_mask=attention_mask)
-                logits = outputs.logits
-                logits = logits[:, :-1, :]
-                logits = logits / self.temperature
-                completion_ids = input_ids_batch[:, -logits_to_keep:]
-                logits = logits[:, -logits_to_keep:]
-                logps = selective_log_softmax(logits, completion_ids)
-                all_logps.append(logps)
-            
-            logps = torch.cat(all_logps, dim=0)
-
-            return logps 
+        return logps
         
     def _get_train_sampler(self, dataset: Optional[Dataset] = None) -> Sampler:
 
@@ -214,3 +212,35 @@ class pLM_GRPOTrainer(GRPOTrainer):
             "ref_per_token_logps": ref_per_token_logps,
         }
     
+
+
+      
+    def _compute_loss(self, model, inputs):
+
+            # Compute the per-token log probabilities for the model
+            prompt_ids, prompt_mask = inputs["prompt_ids"], inputs["prompt_mask"]
+            completion_ids, completion_mask = inputs["completion_ids"], inputs["completion_mask"]
+            input_ids = torch.cat([prompt_ids, completion_ids], dim=1)
+            attention_mask = torch.cat([prompt_mask, completion_mask], dim=1)
+            logits_to_keep = completion_ids.size(1)  # we only need to compute the logits for the completion tokens
+
+            per_token_logps = self._get_per_token_logps(model, input_ids, attention_mask, logits_to_keep, self.batch_size)
+            ref_per_token_logps = inputs["ref_per_token_logps"]
+
+            advantages = inputs["advantages"]
+            #we simulate sampling with a gumbel softmax so to inject noise in the ranking (experimental solution)
+            advantages_g_softmax=F.gumbel_softmax(advantages)
+            sorted_indices = torch.argsort(advantages_g_softmax, descending=True)
+
+            per_token_logps = per_token_logps[sorted_indices]
+            ref_per_token_logps = ref_per_token_logps[sorted_indices] 
+            advantages = advantages[sorted_indices]
+            if not torch.allclose(ref_per_token_logps, per_token_logps, equal_nan=True):
+                pi_ratio = self.beta * per_token_logps.mean(dim=1)
+            else:
+                pi_ratio = self.beta * (per_token_logps.mean(dim=1) - ref_per_token_logps.mean(dim=1))
+                
+            uniform_weights = torch.ones_like(pi_ratio)
+            loss = F.cross_entropy(pi_ratio, uniform_weights)
+
+            return loss

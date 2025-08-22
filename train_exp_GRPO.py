@@ -76,7 +76,7 @@ def generate_dataset():
         prompt = entry["prompt"]
         
         rows.append({
-            "prompt": prompt,
+            "prompt": str(prompt),
             "completion": sequence,
             "reward": advantage
         })
