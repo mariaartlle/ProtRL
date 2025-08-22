@@ -137,7 +137,7 @@ training_args = GRPOConfig(output_dir=args.output,
 trainer = pLM_GRPOTrainer(
     # model= args.model_dir,
     model= model,
-    # ref_model = model,
+    ref_model = model,
     reward_funcs=reward_len,
     args=training_args,
     train_dataset = train_dataset,

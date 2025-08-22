@@ -54,17 +54,17 @@ class pLM_GRPOTrainer(GRPOTrainer):
         model_init_kwargs = args.model_init_kwargs or {}
         print(ref_model, model)
 
-        if self.beta == 0.0:
-            # If beta is 0.0, the reference model is not needed
-            self.ref_model = None
-        elif is_deepspeed_zero3_enabled():
-            print('A')
-            self.ref_model = AutoModelForCausalLM.from_pretrained(ref_model, **model_init_kwargs)
-        else:
-            print('B')
-            # If PEFT configuration is not provided, create a reference model based on the initial model.
-            # self.ref_model = create_reference_model(ref_model)
-            ref_model = model
+        # if self.beta == 0.0:
+        #     # If beta is 0.0, the reference model is not needed
+        #     self.ref_model = None
+        # elif is_deepspeed_zero3_enabled():
+        #     print('A')
+        #     self.ref_model = AutoModelForCausalLM.from_pretrained(ref_model, **model_init_kwargs)
+        # else:
+        #     print('B')
+        #     # If PEFT configuration is not provided, create a reference model based on the initial model.
+        #     # self.ref_model = create_reference_model(ref_model)
+        #     ref_model = model
     
     def _get_per_token_logps(self,
             model,
