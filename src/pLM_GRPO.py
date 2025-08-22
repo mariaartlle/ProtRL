@@ -77,6 +77,7 @@ class pLM_GRPOTrainer(GRPOTrainer):
             values from model logits, similar to a perplexity calculation.
             """
             batch_size = batch_size or input_ids.size(0)  # Chunk inputs into smaller batches to reduce memory peak
+            print(batch_size)
             all_logps = []
             all_entropies = []
             for start in range(0, input_ids.size(0), batch_size):
