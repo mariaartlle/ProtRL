@@ -52,8 +52,10 @@ class pLM_GRPOTrainer(GRPOTrainer):
 
         # Reference model
         model_init_kwargs = args.model_init_kwargs or {}
-        print(ref_model, model)
-
+        # print(ref_model, model)
+        print('post init pLM_GRPO')
+        os.system('nvidia-smi')
+        
         # if self.beta == 0.0:
         #     # If beta is 0.0, the reference model is not needed
         #     self.ref_model = None
@@ -116,8 +118,7 @@ class pLM_GRPOTrainer(GRPOTrainer):
 
         prompt_inputs = self.processing_class(text=prompts, return_tensors="pt", padding=True, padding_side="left", add_special_tokens=False)
         prompt_ids, prompt_mask = prompt_inputs["input_ids"].to(device), prompt_inputs["attention_mask"].to(device)
-        print(prompt_inputs)
-        os.system('nvidia-smi')
+    
         completions = [x["completion"] for x in inputs]
 
 
