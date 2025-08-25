@@ -117,7 +117,7 @@ model = ProGenForCausalLM.from_pretrained(args.model_dir).to(device)
 # ref_model = ProGenForCausalLM.from_pretrained(args.model_dir).to(device)
 
 training_args = GRPOConfig(output_dir=args.output, 
-                           logging_steps=100,
+                           logging_steps=2,
                            beta=CONFIG["beta"],
                            num_train_epochs = CONFIG["num_epochs"],
                            learning_rate = CONFIG["learning_rate"],
@@ -125,14 +125,12 @@ training_args = GRPOConfig(output_dir=args.output,
                            do_eval = True, 
                            eval_strategy = "epoch",
                            save_strategy = "steps",                     
-                           eval_steps = 500, 
-                           save_total_limit = 1,
-                           save_steps = 5,
+                           eval_steps = 23, 
+                        #    save_total_limit = 1,
+                           save_steps = 23,
                            num_generations = 2,
                            per_device_eval_batch_size=2,
-                           per_device_train_batch_size=4)#,
-                        #    num_generations = 2)#,
-                        #    gradient_checkpointing=False)
+                           per_device_train_batch_size=4)
 
 trainer = pLM_GRPOTrainer(
     # model= args.model_dir,
