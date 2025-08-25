@@ -53,7 +53,7 @@ class pLM_GRPOTrainer(GRPOTrainer):
         # Reference model
         model_init_kwargs = args.model_init_kwargs or {}
         # print(ref_model, model)
-        print('post init pLM_GRPO')
+        os.system('echo "post init pLM_GRPO"')
         os.system('nvidia-smi')
         
         # if self.beta == 0.0:
@@ -88,7 +88,16 @@ class pLM_GRPOTrainer(GRPOTrainer):
             for start in range(0, input_ids.size(0), batch_size):
                 input_ids_batch = input_ids[start : start + batch_size]
                 attention_mask_batch = attention_mask[start : start + batch_size]
+
+                os.system('echo "pre model output"')
+                os.system('nvidia-smi')
+
+
                 outputs = model(input_ids, attention_mask=attention_mask)
+                
+                os.system('echo "post model output"')
+                os.system('nvidia-smi')
+                
                 logits = outputs.logits
                 logits = logits[:, :-1, :]
                 logits = logits / self.temperature
@@ -115,6 +124,9 @@ class pLM_GRPOTrainer(GRPOTrainer):
         device = self.accelerator.device
         mode = "eval" if self.control.should_evaluate else "train"
         prompts = [x["prompt"] for x in inputs]
+
+        os.system('echo "pre processing inputs"')
+        os.system('nvidia-smi')
 
         prompt_inputs = self.processing_class(text=prompts, return_tensors="pt", padding=True, padding_side="left", add_special_tokens=False)
         prompt_ids, prompt_mask = prompt_inputs["input_ids"].to(device), prompt_inputs["attention_mask"].to(device)

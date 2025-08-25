@@ -95,15 +95,10 @@ seed_everything(CONFIG["seed"])
 # train_dataset = split['train']
 # eval_dataset   = split['test'] 
 
-print('pre loading datasets')
-os.system('nvidia-smi')
-
 ## because of the amount of similar sequences, pre-split the train and eval datasets to have similar diversity 
 train_dataset = generate_dataset(args.train_csv)
 eval_dataset = generate_dataset(args.eval_csv)
 
-print('post loading datasets')
-os.system('nvidia-smi')
 
 ## change for progen tokenizer
 # tokenizer = AutoTokenizer.from_pretrained(args.model_dir,
@@ -117,9 +112,6 @@ fast_tokenizer.eos_token = '<|eos|>'
 fast_tokenizer.pad_token = fast_tokenizer.eos_token
 
 device = 'cuda:0'
-
-print('pre loading model')
-os.system('nvidia-smi')
 
 model = ProGenForCausalLM.from_pretrained(args.model_dir).to(device)
 # ref_model = ProGenForCausalLM.from_pretrained(args.model_dir).to(device)
@@ -136,11 +128,9 @@ training_args = GRPOConfig(output_dir=args.output,
                            eval_steps = 500, 
                            save_total_limit = 1,
                            save_steps = 5,
-                           num_generations = 8)#,
+                           num_generations = 4)#,
                         #    num_generations = 2)#,
                         #    gradient_checkpointing=False)
-print('post GRPO_config')
-os.system('nvidia-smi')
 
 trainer = pLM_GRPOTrainer(
     # model= args.model_dir,
@@ -153,9 +143,6 @@ trainer = pLM_GRPOTrainer(
     processing_class=fast_tokenizer)
     # per_device_train_batch_size=4,
     # per_device_eval_batch_size=2)
-
-print('post init pLM_GRPO')
-os.system('nvidia-smi')
 
 trainer.train()
 trainer.save_model()
