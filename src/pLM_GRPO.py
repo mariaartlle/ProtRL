@@ -93,13 +93,13 @@ class pLM_GRPOTrainer(GRPOTrainer):
                 attention_mask_batch = attention_mask[start : start + batch_size]
 
                 os.system('echo "pre model output"')
-                os.system('nvidia-smi')
+                # os.system('nvidia-smi')
 
 
                 outputs = model(input_ids, attention_mask=attention_mask)
                 
                 os.system('echo "post model output"')
-                os.system('nvidia-smi')
+                # os.system('nvidia-smi')
                 
                 logits = outputs.logits
                 logits = logits[:, :-1, :]
@@ -129,7 +129,9 @@ class pLM_GRPOTrainer(GRPOTrainer):
         prompts = [x["prompt"] for x in inputs]
 
         os.system('echo "pre processing inputs"')
-        os.system('nvidia-smi')
+        os.system(f'echo "len of prompts/inputs"')
+        os.system(f'echo "{len(prompts)}"')
+
 
         prompt_inputs = self.processing_class(text=prompts, return_tensors="pt", padding=True, padding_side="left", add_special_tokens=False)
         prompt_ids, prompt_mask = prompt_inputs["input_ids"].to(device), prompt_inputs["attention_mask"].to(device)
@@ -148,6 +150,14 @@ class pLM_GRPOTrainer(GRPOTrainer):
         rewards = torch.tensor([x["reward"] for x in inputs], device=device)
                 
         batch_size = rewards.shape[0] // completions_ids.shape[0]
+        
+        os.system('echo "batch size (rewards/completions_ids)"')
+        os.system(f'echo "{batch_size}"')
+        os.system('echo "rewards.shape"')
+        os.system(f'echo "{rewards.shape[0]}"')
+        os.system('echo "completions_ids.shape"')
+        os.system(f'echo "{completions_ids.shape[0]}"')
+        
         rewards_grouped = rewards.view(batch_size, completions_ids.shape[0])
 
         mean_grouped_rewards = rewards_grouped.mean(dim=1)                                   # (N,)
@@ -172,12 +182,13 @@ class pLM_GRPOTrainer(GRPOTrainer):
         is_eos = completions_ids == self.processing_class.eos_token_id
         logits_to_keep = completions_ids.size(1)  # we only need to compute the logits for the completion tokens
         batch_size = self.args.per_device_train_batch_size if mode == "train" else self.args.per_device_eval_batch_size
-        os.system('echo "batch size _completions"')
+        os.system('echo "batch size in self (completions)"')
         os.system(f'echo "{batch_size}"')
         with torch.no_grad():
             # When using num_iterations == 1, old_per_token_logps == per_token_logps, so we can skip it's
             # computation here, and use per_token_logps.detach() instead.
             if self.num_iterations > 1:
+                os.system('echo "A"')
                 old_per_token_logps = self._get_per_token_logps(
                     self.model, prompt_completion_ids, attention_mask, logits_to_keep, batch_size
                 )
@@ -187,11 +198,13 @@ class pLM_GRPOTrainer(GRPOTrainer):
             if self.beta == 0.0:
                 ref_per_token_logps = None
             elif self.ref_model is not None:
+                os.system('echo "B"')
                 ref_per_token_logps = self._get_per_token_logps(
                     self.ref_model, prompt_completion_ids, attention_mask, logits_to_keep, batch_size
                 )
             else:
                 with self.accelerator.unwrap_model(self.model).disable_adapter():
+                os.system('echo "C"')
                     ref_per_token_logps = self._get_per_token_logps(
                         self.model, prompt_completion_ids, attention_mask, logits_to_keep, batch_size
                     )
