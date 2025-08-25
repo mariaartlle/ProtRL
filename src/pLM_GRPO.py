@@ -82,7 +82,10 @@ class pLM_GRPOTrainer(GRPOTrainer):
             values from model logits, similar to a perplexity calculation.
             """
             batch_size = batch_size or input_ids.size(0)  # Chunk inputs into smaller batches to reduce memory peak
-
+            
+            os.system('echo "batch size _get_per_token_logps"')
+            os.system(f'echo "{batch_size}"')
+            
             all_logps = []
             all_entropies = []
             for start in range(0, input_ids.size(0), batch_size):
@@ -169,7 +172,8 @@ class pLM_GRPOTrainer(GRPOTrainer):
         is_eos = completions_ids == self.processing_class.eos_token_id
         logits_to_keep = completions_ids.size(1)  # we only need to compute the logits for the completion tokens
         batch_size = self.args.per_device_train_batch_size if mode == "train" else self.args.per_device_eval_batch_size
-
+        os.system('echo "batch size _completions"')
+        os.system(f'echo "{batch_size}"')
         with torch.no_grad():
             # When using num_iterations == 1, old_per_token_logps == per_token_logps, so we can skip it's
             # computation here, and use per_token_logps.detach() instead.
