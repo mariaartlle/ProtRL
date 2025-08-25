@@ -19,7 +19,7 @@ from accelerate.utils import broadcast_object_list, gather, gather_object, is_pe
 from typing import Any, Optional, Union
 
 from progen.progen2.models.progen.modeling_progen import ProGenForCausalLM
-
+import os
 
 class pLM_GRPOTrainer(GRPOTrainer):
     def __init__(
@@ -54,16 +54,16 @@ class pLM_GRPOTrainer(GRPOTrainer):
         model_init_kwargs = args.model_init_kwargs or {}
         print(ref_model, model)
 
-        if self.beta == 0.0:
-            # If beta is 0.0, the reference model is not needed
-            self.ref_model = None
-        elif is_deepspeed_zero3_enabled():
-            print('A')
-            self.ref_model = AutoModelForCausalLM.from_pretrained(ref_model, **model_init_kwargs)
-        else:
-            print('B')
-            # If PEFT configuration is not provided, create a reference model based on the initial model.
-            self.ref_model = create_reference_model(ref_model)
+        # if self.beta == 0.0:
+        #     # If beta is 0.0, the reference model is not needed
+        #     self.ref_model = None
+        # elif is_deepspeed_zero3_enabled():
+        #     print('A')
+        #     self.ref_model = AutoModelForCausalLM.from_pretrained(ref_model, **model_init_kwargs)
+        # else:
+        #     print('B')
+        #     # If PEFT configuration is not provided, create a reference model based on the initial model.
+        #     self.ref_model = create_reference_model(ref_model)
             # ref_model = model
     
     def _get_per_token_logps(self,
@@ -116,7 +116,8 @@ class pLM_GRPOTrainer(GRPOTrainer):
 
         prompt_inputs = self.processing_class(text=prompts, return_tensors="pt", padding=True, padding_side="left", add_special_tokens=False)
         prompt_ids, prompt_mask = prompt_inputs["input_ids"].to(device), prompt_inputs["attention_mask"].to(device)
-        
+        print(prompt_inputs)
+        os.system('nvidia-smi')
         completions = [x["completion"] for x in inputs]
 
 
