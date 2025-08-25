@@ -49,7 +49,7 @@ training_csv="training_FC.csv"
 eval_csv="eval_FC.csv"
 all_csv="all_dataset.csv"
 
-python /users/nferruz/martigues/no_backup/ProtRL/train_exp_GRPO.py --model_dir "${model_directory}" --train_csv "${training_csv}" --eval_csv "${eval_csv}" --num_epochs 20 --beta 0.01 --learning_rate 0.00002
+python /users/nferruz/martigues/no_backup/ProtRL/train_exp_GRPO.py --model_dir "${model_directory}" --train_csv "${training_csv}" --eval_csv "${eval_csv}" --num_epochs 10 --beta 0.01 --learning_rate 0.00002
 # python /users/nferruz/martigues/no_backup/ProtRL/train_exp_GRPO.py --model_dir "${model_directory}" --csv "${all_csv}" --num_epochs 20 --beta 0.01 --learning_rate 0.00002
 
 
