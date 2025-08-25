@@ -116,20 +116,19 @@ device = 'cuda:0'
 model = ProGenForCausalLM.from_pretrained(args.model_dir).to(device)
 # ref_model = ProGenForCausalLM.from_pretrained(args.model_dir).to(device)
 
-
 training_args = GRPOConfig(output_dir=args.output, 
                            logging_steps=100,
                            beta=CONFIG["beta"],
                            num_train_epochs = CONFIG["num_epochs"],
                            learning_rate = CONFIG["learning_rate"],
-                           do_train = True, 
-                           do_eval = True, 
-                           eval_strategy = "epoch",
-                           save_strategy = "steps",                     
-                           eval_steps = 500, 
-                           save_total_limit = 1,
-                           save_steps = 5,
-                           num_generations = 8)#,
+                           do_train = True)#, 
+                        #    do_eval = True, 
+                        #    eval_strategy = "epoch",
+                        #    save_strategy = "steps",                     
+                        #    eval_steps = 500, 
+                        #    save_total_limit = 1,
+                        #    save_steps = 5,
+                        #    num_generations = 8)#,
                         #    num_generations = 2)#,
                         #    gradient_checkpointing=False)
 
