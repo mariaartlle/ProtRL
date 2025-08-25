@@ -204,7 +204,7 @@ class pLM_GRPOTrainer(GRPOTrainer):
                 )
             else:
                 with self.accelerator.unwrap_model(self.model).disable_adapter():
-                os.system('echo "C"')
+                    os.system('echo "C"')
                     ref_per_token_logps = self._get_per_token_logps(
                         self.model, prompt_completion_ids, attention_mask, logits_to_keep, batch_size
                     )
