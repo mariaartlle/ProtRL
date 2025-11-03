@@ -42,7 +42,7 @@ export CUDA_LAUNCH_BLOCKING=1
 echo RL for the enzyme class $label
 
 
-for i in $(seq 15 $max_iteration_num);
+for i in $(seq 0 $max_iteration_num);
 
 do
 
