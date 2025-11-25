@@ -20,7 +20,7 @@ def append_to_csv(name, sequence, iteration_num, output_file):
         fieldnames = [
             "name",
             "sequence",
-            "lenght",
+            "length",
             "iteration_num",
         ]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -29,13 +29,13 @@ def append_to_csv(name, sequence, iteration_num, output_file):
         writer.writerow({
             "name" : name,
             "sequence" : sequence,
-            "lenght" : len(sequence),
+            "length" : len(sequence),
             "iteration_num": iteration_num,
         })
 
 def generate_dataset(iteration_num, ec_label):
 
-    output_file = "logs.csv"
+    output_file = f"seq_gen_{ec_label}_iteration{iteration_num}.csv"
      
     with open(f"seq_gen_{ec_label}_iteration{iteration_num}.fasta", "r") as f:
         rep_seq = f.readlines()

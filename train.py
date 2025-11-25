@@ -3,6 +3,7 @@ from src.utils import *
 from src.pLM_weigtedDPO import weighted_DPO
 from src.pLM_GRPO import pLM_GRPOTrainer
 
+import argparse, torch, random, math, os
 from datasets import load_dataset, Dataset
 from trl import GRPOConfig, GRPOTrainer
 from transformers import (
@@ -14,13 +15,8 @@ from torch import nn
 from torch.optim.lr_scheduler import LambdaLR
 from torch.optim import AdamW
 from accelerate.utils import broadcast_object_list, gather, gather_object, is_peft_model, set_seed
-import argparse
-import torch
 import numpy as np
-import random
 import pandas as pd
-import math
-import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--iteration_num", type=int, required=True)
@@ -28,9 +24,7 @@ parser.add_argument("--label", type=str, required=True)
 parser.add_argument("--model_dir", type=str, required=True)
 parser.add_argument("--max_iteration_num", type=int, required=True)
 
-
 args = parser.parse_args()
-
 
 CONFIG = {
     "beta": 0.01,
@@ -53,42 +47,46 @@ def seed_everything(seed):
     random.seed(seed)
     set_seed(seed)
 
-
-
 def reward_len(completions, **kwargs):
     return 0
-
 
 def format_sequence(sequence, label):
     return f"<sep><start>{sequence}<end><|endoftext|>"
 
 def generate_dataset(iteration_num, label):
 
-    df = pd.read_csv(f"logs.csv")
-    df = df[df["iteration_num"] == (iteration_num - 1) ]
+    df = pd.read_csv(f"seq_gen_{label}_iteration{iteration_num-1}.csv")
+    df = df[df["iteration_num"] == (iteration_num - 1)]
     
     rows = []
-    for idx, entry in df.iterrows():
-        TM_norm_que = float(entry["TM_norm_que"])
-        sequence = entry["sequence"]
-        algn = float(entry["algn"])
-        lenght_rew = math.exp(-((((algn/len(sequence))-1)**2)/(0.5**2)))
+    if 'TM_norm_que' in df.columns: # reward includes TM score and alignment length
+        for idx, entry in df.iterrows():
+            TM_norm_que = float(entry["TM_norm_que"])
+            sequence = entry["sequence"]
+            algn = float(entry["algn"])
+            length_rew = math.exp(-((((algn/len(sequence))-1)**2)/(0.5**2)))
 
-        rows.append({
-            "prompt": label,
-            "completion": format_sequence(sequence, label),
-            "reward": float(TM_norm_que + lenght_rew)
-        })
+            rows.append({
+                "prompt": label,
+                "completion": format_sequence(sequence, label),
+                "reward": float(TM_norm_que + length_rew)
+            })
+    elif 'length' in df.columns: # reward includes only length
+        for idx, entry in df.iterrows():
+            length = float(entry["length"])
+            sequence = entry["sequence"]
+
+            rows.append({
+                "prompt": label,
+                "completion": format_sequence(sequence, label),
+                "reward": length
+            })
     
     return Dataset.from_list(rows)
-
 
 seed_everything(CONFIG["seed"])
 
 # create dataset
-root_dir = os.path.dirname(os.path.abspath(__file__))
-seq_dir = os.path.join(root_dir, "data", "inputs")
-fasta_file = os.path.join(seq_dir, f"seq_gen_{args.label}_iteration{args.iteration_num-1}.fasta")
 dataset = generate_dataset(args.iteration_num, args.label)
 split = dataset.train_test_split(test_size=CONFIG["split_percent"], seed=CONFIG["seed"], shuffle=True)
 
@@ -130,7 +128,8 @@ training_args = GRPOConfig(output_dir=f"output_iteration{args.iteration_num}",
                            eval_steps = 500, 
                            save_total_limit = 1,
                            save_steps = 5,
-                           num_generations = 8)
+                           num_generations = 8,
+                           report_to = "none")
 
 print("model ",model)
 trainer = pLM_GRPOTrainer(
